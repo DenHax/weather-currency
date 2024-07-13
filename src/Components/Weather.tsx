@@ -9,19 +9,33 @@ const WeatherForecast = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [chartData, setChart] = useState(true);
+  const [chartData, setChart] = useState(null);
 
   useEffect(() => {
-    axios.get('https://wttr.in/?format=j1').then(response => {
-      const forecart = response.data.weather[0].hourly;
-      const labels = forecart.map((hour, index) => `${index}:00`);
-      const tempeatures = forecast.map(hour => hour.tempC);
-      setData({ labels, tempeatures });
-    }).catch(error => {
-      setError(error);
-      setLoading(false);
-    })
-  })
+    axios.get('https://wttr.in/?format=j1')
+      .then(response => {
+        const forecast = response.data.weather.slice(0, 7);
+        const labels = forecast.map(day => day.date);
+        const temperatures = forecast.map(day => parseFloat(day.avgtempC));
+        setData({ labels, temperatures });
+        setChart({
+          labels,
+          datasets: [
+            {
+              label: 'Average Temperature (°C)',
+              data: temperatures,
+              fill: false,
+              borderColor: 'rgba(75,192,192,1)',
+            },
+          ],
+        });
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -33,10 +47,15 @@ const WeatherForecast = () => {
   return (
     <div>
       <h2>Прогноз погоды на неделю</h2>
+      <Line data={chartData} />
       <div>
         <h3>Удаление пунктов из прогноза</h3>
         <ul>
-          <li></li>
+          {data.labels.map((label, index) => (
+            <li key={index}>
+              {label}: {data.temperatures[index]}°C
+            </li>
+          ))}
         </ul>
       </div>
     </div>

@@ -3,4 +3,4 @@
 
 Технологии: React.
 Сервисы: privatbank, курс доллара.
-Зависимости (пакеты npm): vite, react+typescript, axios, chart.js, react-chartjs-2
+Зависимости (пакеты npm): vite, react+typescript, axios, chart.js, react-chartjs-2, react-router-dom (v6).

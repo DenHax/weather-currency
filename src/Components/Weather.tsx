@@ -97,7 +97,7 @@ const WeatherForecast = () => {
       <h4>Загрузить файл в формате JSON</h4>
       <input type="file" accept=".json" onChange={handleFileUpload} />
       <Line data={chartData} />
-      <button onClick={() => handleDownload()}>Скачать файл</button>
+      <button className='Download-buttom' onClick={() => handleDownload()}>Скачать файл</button>
       <div>
         <h3>Удаление пунктов из прогноза</h3>
         <ul>

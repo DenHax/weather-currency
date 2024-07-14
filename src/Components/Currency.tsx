@@ -9,36 +9,32 @@ const CurrencyRateChart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const [useAPI, setUseAPI] = useState(true);
 
   useEffect(() => {
-    if (useAPI) {
-      axios.get('https://api.exchangerate-api.com/v4/latest/USD')
-        .then(response => {
-          const rates = response.data.rates;
-          const labels = Object.keys(rates);
-          const data = Object.values(rates);
-
-          setData({ labels, data });
-          setChart({
-            labels,
-            datasets: [
-              {
-                label: 'Отношение курса валют к доллару (USD)',
-                data,
-                fill: false,
-                borderColor: 'rgba(75,192,192,1)',
-              },
-            ],
-          });
-          setLoading(false);
-        })
-        .catch(error => {
-          setError(error);
-          setLoading(false);
+    axios.get('https://api.exchangerate-api.com/v4/latest/USD')
+      .then(response => {
+        const rates = response.data.rates;
+        const labels = Object.keys(rates);
+        const data = Object.values(rates);
+        setData({ labels, data });
+        setChart({
+          labels,
+          datasets: [
+            {
+              label: 'Отношение курса валют к доллару (USD)',
+              data,
+              fill: false,
+              borderColor: 'rgba(75,192,192,1)',
+            },
+          ],
         });
-    }
-  }, [useAPI]);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
 
   const handleDelete = (index) => {
     const newLabels = data.labels.filter((_, i) => i !== index);
@@ -67,6 +63,8 @@ const CurrencyRateChart = () => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      console.log("0");
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const jsonData = JSON.parse(e.target.result);
@@ -82,8 +80,8 @@ const CurrencyRateChart = () => {
             },
           ],
         });
-        setUseAPI(false);
       };
+      reader.readAsText(file);
     }
   };
 
@@ -98,7 +96,7 @@ const CurrencyRateChart = () => {
   return (
     <div>
       <h2>Отношение курса валют к USD</h2>
-      <h3>Загрузить файл в формате JSON</h3>
+      <h4>Загрузить файл в формате JSON</h4>
       <input type="file" accept=".json" onChange={handleFileUpload} />
       <Line data={chartData} />
       <button onClick={() => handleDownload()}>Скачать файл</button>

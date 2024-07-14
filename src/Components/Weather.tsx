@@ -4,41 +4,37 @@ import { Line } from 'react-chartjs-2'
 import 'chart.js/auto'
 import { useEffect, useState } from 'react'
 
-
 const WeatherForecast = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [chartData, setChart] = useState(null);
-  const [useAPI, setUseAPI] = useState(true);
 
   useEffect(() => {
-    if (useAPI) {
-      axios.get('https://wttr.in/?format=j1')
-        .then(response => {
-          const forecast = response.data.weather.slice(0, 7);
-          const labels = forecast.map(day => day.date);
-          const temperatures = forecast.map(day => parseFloat(day.avgtempC));
-          setData({ labels, temperatures });
-          setChart({
-            labels,
-            datasets: [
-              {
-                label: 'Средняя температура (°C)',
-                data: temperatures,
-                fill: false,
-                borderColor: 'rgba(75,192,192,1)',
-              },
-            ],
-          });
-          setLoading(false);
-        })
-        .catch(error => {
-          setError(error);
-          setLoading(false);
+    axios.get('https://wttr.in/?format=j1')
+      .then(response => {
+        const forecast = response.data.weather.slice(0, 7);
+        const labels = forecast.map(day => day.date);
+        const temperatures = forecast.map(day => parseFloat(day.avgtempC));
+        setData({ labels, temperatures });
+        setChart({
+          labels,
+          datasets: [
+            {
+              label: 'Средняя температура (°C)',
+              data: temperatures,
+              fill: false,
+              borderColor: 'rgba(75,192,192,1)',
+            },
+          ],
         });
-    }
-  }, [useAPI]);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
 
   const handleDelete = (index) => {
     const newLabels = data.labels.filter((_, i) => i !== index);
@@ -82,8 +78,8 @@ const WeatherForecast = () => {
             },
           ],
         });
-        setUseAPI(false);
       };
+      reader.readAsText(file);
     }
   };
 
@@ -98,7 +94,7 @@ const WeatherForecast = () => {
   return (
     <div>
       <h2>Прогноз погоды на неделю</h2>
-      <h2>Загрузить файл в формате JSON</h2>
+      <h4>Загрузить файл в формате JSON</h4>
       <input type="file" accept=".json" onChange={handleFileUpload} />
       <Line data={chartData} />
       <button onClick={() => handleDownload()}>Скачать файл</button>
@@ -109,6 +105,7 @@ const WeatherForecast = () => {
             <li key={index}>
               {label}: {data.temperatures[index]}°C
               <button onClick={() => handleDelete(index)}>Удалить</button>
+
             </li>
           ))}
         </ul>

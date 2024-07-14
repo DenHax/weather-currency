@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { saver } from 'file-saver'
+import { saveAs } from 'file-saver';
 import { Line } from 'react-chartjs-2'
 import 'chart.js/auto'
 import { useEffect, useState } from 'react'
@@ -37,6 +37,30 @@ const WeatherForecast = () => {
       });
   }, []);
 
+  const handleDelete = (index) => {
+    const newLabels = data.labels.filter((_, i) => i !== index);
+    const newTemperatures = data.temperatures.filter((_, i) => i !== index);
+
+    setData({ labels: newLabels, temperatures: newTemperatures });
+    setChart({
+      labels: newLabels,
+      datasets: [
+        {
+          label: 'Average Temperature (°C)',
+          data: newTemperatures,
+          fill: false,
+          borderColor: 'rgba(75,192,192,1)',
+        },
+      ],
+    });
+  };
+
+  const handleDownload = () => {
+    const jsonData = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    saveAs(blob, 'weather_forecast.json');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -54,9 +78,11 @@ const WeatherForecast = () => {
           {data.labels.map((label, index) => (
             <li key={index}>
               {label}: {data.temperatures[index]}°C
+              <button onClick={() => handleDelete(index)}>Delete</button>
             </li>
           ))}
         </ul>
+        <button onClick={() => handleDownload()}>Download JSON</button>
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ const WeatherForecast = () => {
           labels,
           datasets: [
             {
-              label: 'Average Temperature (°C)',
+              label: 'Средняя температура (°C)',
               data: temperatures,
               fill: false,
               borderColor: 'rgba(75,192,192,1)',
@@ -46,7 +46,7 @@ const WeatherForecast = () => {
       labels: newLabels,
       datasets: [
         {
-          label: 'Average Temperature (°C)',
+          label: 'Средняя температура (°C)',
           data: newTemperatures,
           fill: false,
           borderColor: 'rgba(75,192,192,1)',
@@ -60,6 +60,31 @@ const WeatherForecast = () => {
     const blob = new Blob([jsonData], { type: 'application/json' });
     saveAs(blob, 'weather_forecast.json');
   };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const jsonData = JSON.parse(e.target.result);
+        setData(jsonData);
+        setChart({
+          labels: jsonData.labels,
+          datasets: [
+            {
+              label: 'Средняя температура (°C)',
+              data: jsonData.temperatures,
+              fill: false,
+              borderColor: 'rgba(75,192,192,1)',
+            },
+          ],
+        });
+        setUseApiData(false);
+      };
+      reader.readAsText(file);
+    }
+  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -78,11 +103,13 @@ const WeatherForecast = () => {
           {data.labels.map((label, index) => (
             <li key={index}>
               {label}: {data.temperatures[index]}°C
-              <button onClick={() => handleDelete(index)}>Delete</button>
+              <button onClick={() => handleDelete(index)}>Удалить</button>
             </li>
           ))}
         </ul>
-        <button onClick={() => handleDownload()}>Download JSON</button>
+        <button onClick={() => handleDownload()}>Скачать файл</button>
+        <h2>Загрузить файл в формате JSON</h2>
+        <input type="file" accept=".json" onChange={handleFileUpload} />
       </div>
     </div>
   );

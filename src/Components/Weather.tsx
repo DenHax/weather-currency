@@ -10,32 +10,35 @@ const WeatherForecast = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [chartData, setChart] = useState(null);
+  const [useAPI, setUseAPI] = useState(true);
 
   useEffect(() => {
-    axios.get('https://wttr.in/?format=j1')
-      .then(response => {
-        const forecast = response.data.weather.slice(0, 7);
-        const labels = forecast.map(day => day.date);
-        const temperatures = forecast.map(day => parseFloat(day.avgtempC));
-        setData({ labels, temperatures });
-        setChart({
-          labels,
-          datasets: [
-            {
-              label: 'Средняя температура (°C)',
-              data: temperatures,
-              fill: false,
-              borderColor: 'rgba(75,192,192,1)',
-            },
-          ],
+    if (useAPI) {
+      axios.get('https://wttr.in/?format=j1')
+        .then(response => {
+          const forecast = response.data.weather.slice(0, 7);
+          const labels = forecast.map(day => day.date);
+          const temperatures = forecast.map(day => parseFloat(day.avgtempC));
+          setData({ labels, temperatures });
+          setChart({
+            labels,
+            datasets: [
+              {
+                label: 'Средняя температура (°C)',
+                data: temperatures,
+                fill: false,
+                borderColor: 'rgba(75,192,192,1)',
+              },
+            ],
+          });
+          setLoading(false);
+        })
+        .catch(error => {
+          setError(error);
+          setLoading(false);
         });
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error);
-        setLoading(false);
-      });
-  }, []);
+    }
+  }, [useAPI]);
 
   const handleDelete = (index) => {
     const newLabels = data.labels.filter((_, i) => i !== index);
@@ -79,9 +82,8 @@ const WeatherForecast = () => {
             },
           ],
         });
-        setUseApiData(false);
+        setUseAPI(false);
       };
-      reader.readAsText(file);
     }
   };
 

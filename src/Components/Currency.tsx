@@ -98,20 +98,20 @@ const CurrencyRateChart = () => {
   return (
     <div>
       <h2>Отношение курса валют к USD</h2>
+      <h3>Загрузить файл в формате JSON</h3>
+      <input type="file" accept=".json" onChange={handleFileUpload} />
       <Line data={chartData} />
+      <button onClick={() => handleDownload()}>Скачать файл</button>
       <div>
         <h3>Удаление валют из списка</h3>
         <ul>
           {data.labels.map((label, index) => (
             <li key={index}>
               {label}: {data.data[index]}
-              <button onClick={() => handleDelete(index)}>Delete</button>
+              <button onClick={() => handleDelete(index)}>Удалить</button>
             </li>
           ))}
         </ul>
-        <button onClick={() => handleDownload()}>Скачать файл</button>
-        <h2>Загрузить файл в формате JSON</h2>
-        <input type="file" accept=".json" onChange={handleFileUpload} />
       </div>
     </div>
   );

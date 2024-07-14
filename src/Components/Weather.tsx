@@ -87,7 +87,6 @@ const WeatherForecast = () => {
     }
   };
 
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -95,10 +94,14 @@ const WeatherForecast = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
+
   return (
     <div>
       <h2>Прогноз погоды на неделю</h2>
+      <h2>Загрузить файл в формате JSON</h2>
+      <input type="file" accept=".json" onChange={handleFileUpload} />
       <Line data={chartData} />
+      <button onClick={() => handleDownload()}>Скачать файл</button>
       <div>
         <h3>Удаление пунктов из прогноза</h3>
         <ul>
@@ -109,9 +112,6 @@ const WeatherForecast = () => {
             </li>
           ))}
         </ul>
-        <button onClick={() => handleDownload()}>Скачать файл</button>
-        <h2>Загрузить файл в формате JSON</h2>
-        <input type="file" accept=".json" onChange={handleFileUpload} />
       </div>
     </div>
   );
